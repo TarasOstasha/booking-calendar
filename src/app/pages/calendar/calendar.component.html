@@ -1,0 +1,170 @@
+<!-- <iframe src="https://calendar.google.com/calendar/embed?src=garbiche.bucket90%40gmail.com&ctz=America%2FNew_York"
+  style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe> -->
+
+
+<form [formGroup]="appointmentForm" (ngSubmit)="userAppointment()">
+  <mat-horizontal-stepper #stepper>
+    <mat-step [stepControl]="firstFormGroup" linear >
+      <form>
+        <ng-template matStepLabel>Choose Appointment</ng-template>
+        <mat-expansion-panel 
+          (click)="chooseMainService(option.type)" 
+          *ngFor="let option of services; let index = index"
+          [expanded]="option.id === currentOpenedItemId" 
+          (opened)="handleOpened(option)">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ option.type }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <p class="option-content">
+            <mat-drawer-container class="example-container" autosize>
+              <mat-drawer #drawer class="example-sidenav col-md-4" mode="side">
+                <p>
+                  <mat-checkbox (change)="additionalServices($event)" [value]="option.type" [color]="option.color"
+                    class="example-margin" *ngFor="let option of option.additional">
+                    {{ option.type }}-{{ option.price }}$
+                  </mat-checkbox>
+                </p>
+              </mat-drawer>
+              <!-- ADDITIONAL SERVICE -->
+              <div class="example-sidenav-content col-md-12">
+                <ul class="service-list">
+                  <li>
+                    <fa-icon [icon]="faCheck"></fa-icon>service include
+                  </li>
+                  <li>
+                    <fa-icon [icon]="faCheck"></fa-icon>service include
+                  </li>
+                  <li>
+                    <fa-icon [icon]="faCheck"></fa-icon>service include
+                  </li>
+                  <li>
+                    <fa-icon [icon]="faCheck"></fa-icon>service include
+                  </li>
+                </ul>
+                <mat-card class="mat-card">
+                  <mat-card-header>
+                    <div mat-card-avatar class="example-header-image">
+                      <img src="http://www.skidompha.org/wp-content/uploads/2018/05/Your-Logo-300x288.png" alt="logo">
+                    </div>
+                    <mat-card-title>{{ option.type }}</mat-card-title>
+                    <mat-card-subtitle></mat-card-subtitle>
+                  </mat-card-header>
+                  <img mat-card-image
+                    src="https://www.thespruce.com/thmb/MY9FTRp1pOqAF1NHcHGgqyAtaD8=/960x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/how-to-mop-a-floor-1901114-01-c784851271e443ada648a447d6f9adb2.jpg"
+                    alt="Photo of a Shiba Inu">
+                  <mat-card-content>
+                    <p>
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, laborum?
+                    </p>
+                  </mat-card-content>
+                  <mat-card-actions>
+                    <!-- <a href="" mat-button></a> -->
+                    <button mat-button>{{ option.price }}$</button>
+                    <div>
+                      <button mat-button (click)="bookCalendar()">Booking</button>
+                      <button type="button" mat-button (click)="drawer.toggle()">More Services</button>
+                    </div>
+
+                  </mat-card-actions>
+                </mat-card>
+                <!-- <button type="button" mat-button (click)="drawer.toggle()">
+                        Toggle sidenav
+                      </button> -->
+              </div>
+              <!-- CALENDAR -->
+              <div class="calendar" *ngIf="calendarFlag">
+                <div class="row text-center">
+                  <div class="col-md-4">
+                    <div class="btn-group">
+                      <div class="btn btn-primary" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate">
+                        Previous
+                      </div>
+                      <div class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate">
+                        Today
+                      </div>
+                      <div class="btn btn-primary" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate">
+                        Next
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="btn-group">
+                      <div class="btn btn-primary" (click)="setView(CalendarView.Month)"
+                        [class.active]="view === CalendarView.Month">
+                        Month
+                      </div>
+                      <div class="btn btn-primary" (click)="setView(CalendarView.Week)"
+                        [class.active]="view === CalendarView.Week">
+                        Week
+                      </div>
+                      <div class="btn btn-primary" (click)="setView(CalendarView.Day)"
+                        [class.active]="view === CalendarView.Day">
+                        Day
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div [ngSwitch]="view">
+                  <mwl-calendar-month-view (dayClicked)="dayClicked($event.day)" *ngSwitchCase="CalendarView.Month"
+                    [viewDate]="viewDate" [events]="events">
+                  </mwl-calendar-month-view>
+                  <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week" [viewDate]="viewDate" [events]="events">
+                  </mwl-calendar-week-view>
+                  <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day" [viewDate]="viewDate" [events]="events">
+                  </mwl-calendar-day-view>
+                </div>
+              </div>
+            </mat-drawer-container>
+          </p>
+        </mat-expansion-panel>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="secondFormGroup" errorMessage="Your Info is required.">
+      <!-- <form [formGroup]="secondFormGroup"> -->
+      <div class="user-form">
+
+        <ng-template matStepLabel>Your Info</ng-template>
+        <mat-form-field>
+          <mat-label>Your Full Name</mat-label>
+          <input matInput formControlName="userName" placeholder="Jack Jonas" required>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Your Telephone</mat-label>
+          <input type="tel" matInput formControlName="userPhone" required>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Your Email</mat-label>
+          <input type="email" matInput formControlName="userEmail" placeholder="Jack Jonas" required>
+        </mat-form-field>
+        <div class="user-buttons">
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Pay Now</button>
+          <button mat-button>Pay Later</button>
+        </div>
+      </div>
+      <!-- </form> -->
+    </mat-step>
+    <mat-step>
+      payment must be here stripe and pay paypall
+      <ng-template matStepLabel>Payment System</ng-template>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button matStepperNext>Pay Now</button>
+      <button mat-button>Pay Later</button>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Done</ng-template>
+      <p>You are now done.</p>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button (click)="stepper.reset()">Reset</button>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+</form>
